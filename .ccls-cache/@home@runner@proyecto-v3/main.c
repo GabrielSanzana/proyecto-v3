@@ -19,7 +19,7 @@ typedef struct{
   int gastoDia;
 }tipoDia;
 
-void registro_de_productos(HashMap *mapaProducto){
+void registro_de_productos(HashMap *mapaProducto, HashMap *mapaSemanal){
   char *nombre;
   int precioCompra, precioVenta, stockInicial, cantVendida;
   printf("Ingrese el nombre del producto,precio de compra,precio de venta y stock. Separado por comas\n");
@@ -31,9 +31,10 @@ void registro_de_productos(HashMap *mapaProducto){
   productoAux->stockInicial = stockInicial;
   productoAux->cantVendida = 0;
   insertMap(mapaProducto, productoAux->nombre, productoAux);
+  insertMap(mapaSemanal, productoAux->nombre, productoAux);
 }
 
-void Control_de_stock(HashMap *mapaProducto)
+void Control_de_stock(HashMap *mapaProducto, HashMap *mapaSemanal)
 {
   //pensar en poner variables que sumen la ganancia e inversion total 
   char *nombre;
@@ -47,16 +48,17 @@ void Control_de_stock(HashMap *mapaProducto)
     return;
   }
   tipoProducto * productoAux = buscado->value;
-  
+  tipoProducto * productoEnSemanal = searchMap(mapaSemanal, nombre)->value;
   if(productoAux->cantVendida + cantVendida > productoAux->stockInicial || cantVendida <= 0)
   {
     puts("No se puede.");
     return; 
   }
   productoAux->cantVendida=productoAux->cantVendida+cantVendida;
+  productoEnSemanal->cantVendida = productoEnSemanal->cantVendida + cantVendida;
 }
 
-void modificar_datos_de_un_producto(HashMap *mapaProducto)
+void modificar_datos_de_un_producto(HashMap *mapaProducto, HashMap *mapaSemanal)
 {
   int opcion, nuevoValor;
   char nombreProducto[100];
@@ -70,7 +72,7 @@ void modificar_datos_de_un_producto(HashMap *mapaProducto)
     return;
   }
   tipoProducto *producto = buscado->value;
-
+  tipoProducto *productoSemana = searchMap(mapaProducto, nombreProducto)->value;
   printf("Seleccione que quiere cambia\n");
   printf("1. Precio de compra\n");
   printf("2. Precio de venta\n");
@@ -84,23 +86,27 @@ void modificar_datos_de_un_producto(HashMap *mapaProducto)
         scanf("%d", &nuevoValor);
         getchar();
         producto->precioCompra = nuevoValor;
+        productoSemana->precioCompra = nuevoValor;
         break;
       case 2:
         printf("Ingrese el nuevo precio de venta\n");
         scanf("%d", &nuevoValor);
         producto->precioVenta = nuevoValor;
+        productoSemana->precioVenta = nuevoValor;
+
         break;
       case 3:
         printf("Ingrese el nuevo stock inicial\n");
         scanf("%d", &nuevoValor);
         producto->stockInicial = nuevoValor;
+        productoSemana->stockInicial = nuevoValor;
       default:
         printf("Opcion invalida\n");
         return;
     }
 }
 
-void Cargar_csv_de_stock(HashMap *mapaProducto, char *nombre_archivo){
+void Cargar_csv_de_stock(HashMap *mapaProducto, HashMap *mapaSemanal, char *nombre_archivo){
   char caracter[100], *nombre;
   FILE *archivoCsv = fopen(nombre_archivo, "r");
   int precioCompra, precioVenta, stockInicial, cantVendida,opcion;
@@ -146,9 +152,15 @@ void mostrarMapa(HashMap *mapaProducto) {
     }
 }
 
+void finalizarDia(HashMap *mapaProducto, HashMap *mapaSemanal, List *listaDia)
+{
+  
+}
+
 int main()
 {
   HashMap *mapaProducto = createMap((long)100);
+  HashMap *mapaSemanal = createMap((long)100);
   List * listaDias = createList();
   char caracter[100], *nombre, *archivoCargado;
   int precioCompra, precioVenta, stockInicial, antVendida, opcion, contadorDia = 0;
