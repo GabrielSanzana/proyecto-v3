@@ -40,6 +40,20 @@ void Control_de_stock(HashMap *mapaProducto)
   int cantVendida;
   printf("Ingrese el nombre del producto y las unidades que vendio. Separado por una coma\n");
   scanf("%m[^,],%d",&nombre,&cantVendida);
+  Pair *buscado = searchMap(mapaProducto, nombre);
+  if(buscado == NULL)
+  {
+    printf("El producto no existe.");
+    return;
+  }
+  tipoProducto * productoAux = buscado->value;
+  
+  if(productoAux->cantVendida + cantVendida > productoAux->stockInicial || cantVendida <= 0)
+  {
+    puts("No se puede.");
+    return; 
+  }
+  productoAux->cantVendida=productoAux->cantVendida+cantVendida;
 }
 
 
