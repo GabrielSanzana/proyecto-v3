@@ -24,7 +24,13 @@ void registro_de_productos(HashMap *mapaProducto){
   int precioCompra, precioVenta, stockInicial, cantVendida;
   printf("Ingrese el nombre del producto,precio de compra,precio de venta y stock. Separado por comas\n");
   scanf("%m[^,],%d,%d,%d", &nombre, &precioCompra, &precioVenta, &stockInicial);
-
+  tipoProducto *productoAux = malloc(sizeof(tipoProducto));
+  productoAux->nombre = strdup(nombre);
+  productoAux->precioCompra = precioCompra;
+  productoAux->precioVenta = precioVenta;
+  productoAux->stockInicial = stockInicial;
+  productoAux->cantVendida = 0;
+  insertMap(mapaProducto, productoAux->nombre, productoAux);
 }
 
 
