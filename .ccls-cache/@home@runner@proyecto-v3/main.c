@@ -112,6 +112,21 @@ void Cargar_csv_de_stock(HashMap *mapaProducto, char *nombre_archivo){
     printf("——————————————————————————————————————————————————————————————————————————\n\n");
     return;
   }
+
+  fgets(caracter, 99, archivoCsv);
+
+  while (fscanf(archivoCsv, "%m[^,],%d,%d,%d\n", &nombre, &precioCompra, &precioVenta, &stockInicial) != EOF) {
+    tipoProducto *producto = malloc(sizeof(tipoProducto));
+    producto->nombre = strdup(nombre);
+    producto->precioCompra = precioCompra;
+    producto->precioVenta = precioVenta;
+    producto->stockInicial = stockInicial;
+    producto->cantVendida = 0;
+    insertMap(mapaProducto, producto->nombre, producto);
+    
+  }
+  printf("\nArchivo importado.\n");
+  fclose(archivoCsv);
 }
 
 int main()
