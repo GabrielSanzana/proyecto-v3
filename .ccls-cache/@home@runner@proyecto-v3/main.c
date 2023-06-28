@@ -142,25 +142,62 @@ void Cargar_csv_de_stock(HashMap *mapaProducto, HashMap *mapaSemanal, char *nomb
 }
 
 void mostrarMapa(HashMap *mapaProducto) {
-    printf("Productos almacenados:\n");
+  printf("Productos almacenados:\n");
 
-    Pair *pair = firstMap(mapaProducto);
-    while (pair != NULL) {
-        tipoProducto *producto = (tipoProducto *)pair->value;
-        printf("Nombre: %s\n", producto->nombre);
-        printf("Precio de compra: %d\n", producto->precioCompra);
-        printf("Precio de venta: %d\n", producto->precioVenta);
-        printf("Stock inicial: %d\n", producto->stockInicial);
-        printf("Cantidad vendida: %d\n", producto->cantVendida);
-        printf("------------------------\n");
-
-        pair = nextMap(mapaProducto);
-    }
+  Pair *pair = firstMap(mapaProducto);
+  while (pair != NULL) {
+    tipoProducto *producto = (tipoProducto *)pair->value;
+    printf("Nombre: %s\n", producto->nombre);
+    printf("Precio de compra: %d\n", producto->precioCompra);
+    printf("Precio de venta: %d\n", producto->precioVenta);
+    printf("Stock inicial: %d\n", producto->stockInicial);
+    printf("Cantidad vendida: %d\n", producto->cantVendida);
+    printf("------------------------\n");
+    pair = nextMap(mapaProducto);
+  }
 }
 
-void finalizarDia(HashMap *mapaProducto, HashMap *mapaSemanal, List *listaDia)
+void Exportar_mapa(char* nombre_archivo, HashMap* mapaProducto, HashMap* mapaSemanal) {
+    tipoProducto* local = NULL;
+    FILE* archivo = fopen(nombre_archivo, "w");
+    fprintf(archivo, "Producto,Precio de Compra,Precio de Venta,Stock,CantVendida\n");
+
+    // Recorrer los jugadores en el mapa y escribir sus datos en el archivo
+    Pair* producto = firstMap(mapaProducto);
+    
+    while (producto != NULL) {
+        local = producto->value;
+        tipoProducto *aux = searchMap(mapaSemanal, local->nombre)->value;
+        local->cantVendida = aux->cantVendida - local->cantVendida;
+        if(local==NULL)
+          break;
+        // Escribir nombre, puntos de habilidad y cantidad de items en el archivo
+        fprintf(archivo, "%s,%d,%d,%d,%d", local->nombre, local->precioCompra, local->precioVenta, local->stockInicial, local->cantVendida);
+
+        fprintf(archivo, "\n");
+        producto = nextMap(mapaProducto);
+    }
+
+    printf("\nArchivo exportado.\n");
+    printf("————————————————————————————————————————————————————————————\n\n");
+    fclose(archivo);
+}
+
+
+void finalizarDia(HashMap *mapaProducto, HashMap *mapaSemanal, List *listaDia, int *contadorDia)
 {
-  
+  if(*contadorDia != 7)
+  {
+    char* nombre_archivo =  "csvDiario.csv"; 
+    Exportar_mapa(nombre_archivo, mapaProducto, mapaSemanal);
+    
+    free(nombre_archivo);
+    system("pythonDiario.py");
+  }
+  else
+  {
+    exit(EXIT_SUCCESS);
+  }
 }
 
 int main()
@@ -169,7 +206,7 @@ int main()
   HashMap *mapaSemanal = createMap((long)100);
   List * listaDias = createList();
   char caracter[100], *nombre, *archivoCargado;
-  int precioCompra, precioVenta, stockInicial, antVendida, opcion, contadorDia = 0;
+  int precioCompra, precioVenta, stockInicial, antVendida, opcion, contadorDia = 1;
   FILE *ArchivoPrueba = fopen("ArchivoPrueba.csv", "r");
   fgets(caracter, 99, ArchivoPrueba);
   while (fscanf(ArchivoPrueba, "%m[^,],%d,%d,%d\n", &nombre, &precioCompra, &precioVenta, &stockInicial) != EOF) {
@@ -225,7 +262,7 @@ int main()
       printf("————————————————————————————————————————————————————————————\n\n");
         break;
       case 6:
-        finalizarDia(mapaProducto,mapaSemanal,listaDias);
+        finalizarDia(mapaProducto,mapaSemanal,listaDias, &contadorDia);
         contadorDia++;
         break;
       default:
