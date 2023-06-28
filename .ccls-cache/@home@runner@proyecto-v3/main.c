@@ -100,6 +100,20 @@ void modificar_datos_de_un_producto(HashMap *mapaProducto)
     }
 }
 
+void Cargar_csv_de_stock(HashMap *mapaProducto, char *nombre_archivo){
+  char caracter[100], *nombre;
+  FILE *archivoCsv = fopen(nombre_archivo, "r");
+  int precioCompra, precioVenta, stockInicial, cantVendida,opcion;
+  
+  if (archivoCsv == NULL) 
+  {
+    printf("\n——————————————————————————————————————————————————————————————————————————\n");
+    printf("El archivo %s no existe en el directorio actual o esta mal escrito.\n", nombre_archivo);
+    printf("——————————————————————————————————————————————————————————————————————————\n\n");
+    return;
+  }
+}
+
 int main()
 {
   HashMap *mapaProducto = createMap((long)100);
