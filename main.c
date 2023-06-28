@@ -129,7 +129,13 @@ void Cargar_csv_de_stock(HashMap *mapaProducto, HashMap *mapaSemanal, char *nomb
     producto->stockInicial = stockInicial;
     producto->cantVendida = 0;
     insertMap(mapaProducto, producto->nombre, producto);
-    
+    if(searchMap(mapaSemanal, producto->nombre) == NULL)
+      insertMap(mapaSemanal, producto->nombre, producto);
+    else
+    {
+      tipoProducto *productoExistente = searchMap(mapaSemanal, producto->nombre)->value;
+      productoExistente->stockInicial += stockInicial;
+    }
   }
   printf("\nArchivo importado.\n");
   fclose(archivoCsv);
