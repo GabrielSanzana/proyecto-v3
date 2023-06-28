@@ -63,6 +63,20 @@ void modificar_datos_de_un_producto(HashMap *mapaProducto)
 
   printf("Ingrese el nombre del producto a modificar\n");
   scanf("%s", nombreProducto);
+  Pair *buscado = searchMap(mapaProducto, nombreProducto);
+  if(buscado == NULL)
+  {
+    printf("El producto no existe");
+    return;
+  }
+  tipoProducto *producto = buscado->value;
+
+  printf("Seleccione que quiere cambia\n");
+  printf("1. Precio de compra\n");
+  printf("2. Precio de venta\n");
+  printf("3. Stock inicial\n");
+  scanf("%d", &opcion);
+  getchar();
   
 }
 
