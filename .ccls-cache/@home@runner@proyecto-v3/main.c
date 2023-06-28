@@ -19,6 +19,15 @@ typedef struct{
   int gastoDia;
 }tipoDia;
 
+void registro_de_productos(HashMap *mapaProducto, HashMap *mapaSemanal){
+  char *nombre;
+  int precioCompra, precioVenta, stockInicial, cantVendida;
+  printf("Ingrese el nombre del producto,precio de compra,precio de venta y stock. Separado por comas\n");
+  scanf("%m[^,],%d,%d,%d", &nombre, &precioCompra, &precioVenta, &stockInicial);
+
+}
+
+
 int main()
 {
   HashMap *mapaProducto = createMap((long)100);
