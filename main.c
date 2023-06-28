@@ -56,6 +56,15 @@ void Control_de_stock(HashMap *mapaProducto)
   productoAux->cantVendida=productoAux->cantVendida+cantVendida;
 }
 
+void modificar_datos_de_un_producto(HashMap *mapaProducto)
+{
+  int opcion, nuevoValor;
+  char nombreProducto[100];
+
+  printf("Ingrese el nombre del producto a modificar\n");
+  scanf("%s", nombreProducto);
+  
+}
 
 int main()
 {
