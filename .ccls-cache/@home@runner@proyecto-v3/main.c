@@ -220,6 +220,7 @@ void Exportar_mapa_semanal(char* nombre_archivo, Heap *monticuloMaximo , Heap *m
       contador++;
     }
 
+
     printf("\nArchivo exportado.\n");
     printf("————————————————————————————————————————————————————————————\n\n");
     fclose(archivo);
