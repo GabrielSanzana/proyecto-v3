@@ -19,10 +19,10 @@ typedef struct{
   int gastoDia;
 }tipoDia;
 
-void registro_de_productos(HashMap *mapaProducto, HashMap *mapaSemanal){
+void registro_de_productos(HashMap *mapaProducto, HashMap *mapaSemanal) {
   char *nombre;
   int precioCompra, precioVenta, stockInicial, cantVendida;
-  printf("Ingrese el nombre del producto,precio de compra,precio de venta y stock. Separado por comas\n");
+  printf("Ingrese el nombre del producto, precio de compra, precio de venta y stock. Separado por comas\n");
   scanf("%m[^,],%d,%d,%d", &nombre, &precioCompra, &precioVenta, &stockInicial);
   tipoProducto *productoAux = malloc(sizeof(tipoProducto));
   productoAux->nombre = strdup(nombre);
@@ -30,9 +30,18 @@ void registro_de_productos(HashMap *mapaProducto, HashMap *mapaSemanal){
   productoAux->precioVenta = precioVenta;
   productoAux->stockInicial = stockInicial;
   productoAux->cantVendida = 0;
+
+  tipoProducto *copiaProductoAux = malloc(sizeof(tipoProducto));
+  copiaProductoAux->nombre = strdup(nombre);
+  copiaProductoAux->precioCompra = precioCompra;
+  copiaProductoAux->precioVenta = precioVenta;
+  copiaProductoAux->stockInicial = stockInicial;
+  copiaProductoAux->cantVendida = 0;
+
   insertMap(mapaProducto, productoAux->nombre, productoAux);
-  insertMap(mapaSemanal, productoAux->nombre, productoAux);
+  insertMap(mapaSemanal, copiaProductoAux->nombre, copiaProductoAux);
 }
+
 
 void Control_de_stock(HashMap *mapaProducto, HashMap *mapaSemanal)
 {
@@ -54,8 +63,13 @@ void Control_de_stock(HashMap *mapaProducto, HashMap *mapaSemanal)
     puts("No se puede.");
     return; 
   }
-  productoAux->cantVendida=productoAux->cantVendida+cantVendida;
+  printf("%d\n", productoAux->cantVendida);
+  productoAux->cantVendida = productoAux->cantVendida + cantVendida;
+  printf("%d\n", productoAux->cantVendida);
+  
   productoEnSemanal->cantVendida = productoEnSemanal->cantVendida + cantVendida;
+  printf("%d\n", productoEnSemanal->cantVendida);
+
 }
 
 void modificar_datos_de_un_producto(HashMap *mapaProducto, HashMap *mapaSemanal)
@@ -157,24 +171,27 @@ void mostrarMapa(HashMap *mapaProducto) {
   }
 }
 
-void Exportar_mapa(char* nombre_archivo, HashMap* mapaProducto, HashMap* mapaSemanal) {
+void Exportar_mapa(char* nombre_archivo, Heap *monticuloMaximo , Heap *monticuloMinimo, int contadorDia) {
     tipoProducto* local = NULL;
     FILE* archivo = fopen(nombre_archivo, "w");
     fprintf(archivo, "Producto,Precio de Compra,Precio de Venta,Stock,CantVendida\n");
 
-    // Recorrer los jugadores en el mapa y escribir sus datos en el archivo
-    Pair* producto = firstMap(mapaProducto);
-    
+    Pair* producto = heap_top(monticuloMaximo);
+  
     while (producto != NULL) {
         local = producto->value;
-        tipoProducto *aux = searchMap(mapaSemanal, local->nombre)->value;
-        local->cantVendida = aux->cantVendida - local->cantVendida;
+        tipoProducto *aux = heap_top(monticuloMinimo);
         if(local==NULL)
           break;
-        // Escribir nombre, puntos de habilidad y cantidad de items en el archivo
+        while (contador <= 5)
+        {
         fprintf(archivo, "%s,%d,%d,%d,%d", local->nombre, local->precioCompra, local->precioVenta, local->stockInicial, local->cantVendida);
+        }
 
         fprintf(archivo, "\n");
+        local->stockInicial=local->stockInicial-local->cantVendida;
+        local->cantVendida=0;
+        
         producto = nextMap(mapaProducto);
     }
 
@@ -183,19 +200,66 @@ void Exportar_mapa(char* nombre_archivo, HashMap* mapaProducto, HashMap* mapaSem
     fclose(archivo);
 }
 
+void Exportar_mapa_semanal(char* nombre_archivo, Heap *monticuloMaximo , Heap *monticuloMinimo) {
+    tipoProducto* local = NULL;
+    int contador = 1;
+    FILE* archivo = fopen(nombre_archivo, "w");
+    fprintf(archivo, "Producto,Precio de Compra,Precio de Venta,Stock,CantVendida\n");
+
+    tipoProducto* productoMax = heap_top(monticuloMaximo);
+    tipoProducto* productoMin = heap_top(monticuloMinimo);
+    
+    while (contador <= 5) 
+    {
+        fprintf(archivo, "%s,%d,%d,%d,%d", productoMax->nombre, productoMax->precioCompra, local->precioVenta, local->stockInicial, local->cantVendida);
+
+        fprintf(archivo, "\n");
+        local->stockInicial=local->stockInicial-local->cantVendida;
+        local->cantVendida=0;
+        
+        producto = nextMap(mapaProducto);
+    }
+
+    printf("\nArchivo exportado.\n");
+    printf("————————————————————————————————————————————————————————————\n\n");
+    fclose(archivo);
+}
 
 void finalizarDia(HashMap *mapaProducto, HashMap *mapaSemanal, List *listaDia, int *contadorDia)
 {
+  Heap *monticuloMaximo = createHeap(), *monticuloMinimo = createHeap();
   if(*contadorDia != 7)
   {
+    Pair *aux = firstMap(mapaProducto);
+    while (aux != NULL)
+    {
+      tipoProducto *producto = (tipoProducto*) aux->value;
+      heap_pushMax(monticuloMaximo, producto, producto->cantVendida);
+      heap_pushMin(monticuloMinimo, producto, producto->cantVendida);
+      aux = nextMap(mapaProducto);
+    }
     char* nombre_archivo =  "csvDiario.csv"; 
-    Exportar_mapa(nombre_archivo, mapaProducto, mapaSemanal);
     
-    free(nombre_archivo);
-    system("pythonDiario.py");
+    Exportar_mapa(nombre_archivo, monticuloMaximo, monticuloMinimo, *contadorDia);
+    
+    //free(nombre_archivo);
+    //system("pythonDiario.py");
   }
   else
   {
+    Pair *aux = firstMap(mapaSemanal);
+    char *nombre_archivo;
+    while (aux != NULL)
+    {
+      tipoProducto *producto = (tipoProducto*) aux->value;
+      heap_pushMax(monticuloMaximo, producto, producto->cantVendida);
+      heap_pushMin(monticuloMinimo, producto, producto->cantVendida);
+      aux = nextMap(mapaSemanal);
+    }
+    printf("¿Como quiere llamar el archivo de esta semana?");
+    scanf("%m[^\n]", &nombre_archivo);
+    getchar();
+    Exportar_mapa(nombre_archivo, monticuloMaximo, monticuloMinimo);
     exit(EXIT_SUCCESS);
   }
 }
@@ -206,7 +270,7 @@ int main()
   HashMap *mapaSemanal = createMap((long)100);
   List * listaDias = createList();
   char caracter[100], *nombre, *archivoCargado;
-  int precioCompra, precioVenta, stockInicial, antVendida, opcion, contadorDia = 1;
+  int precioCompra, precioVenta, stockInicial, opcion, contadorDia = 1;
   FILE *ArchivoPrueba = fopen("ArchivoPrueba.csv", "r");
   fgets(caracter, 99, ArchivoPrueba);
   while (fscanf(ArchivoPrueba, "%m[^,],%d,%d,%d\n", &nombre, &precioCompra, &precioVenta, &stockInicial) != EOF) {
@@ -217,6 +281,16 @@ int main()
     producto->stockInicial = stockInicial;
     producto->cantVendida = 0;
     insertMap(mapaProducto, producto->nombre, producto);
+    tipoProducto *copiaProductoAux = malloc(sizeof(tipoProducto));
+    copiaProductoAux->nombre = strdup(nombre);
+    copiaProductoAux->precioCompra = precioCompra;
+    copiaProductoAux->precioVenta = precioVenta;
+    copiaProductoAux->stockInicial = stockInicial;
+    copiaProductoAux->cantVendida = 0;
+
+  insertMap(mapaProducto, producto->nombre, producto);
+  insertMap(mapaSemanal, producto->nombre, copiaProductoAux);
+    
   }
   
   fclose(ArchivoPrueba);
@@ -268,4 +342,5 @@ int main()
       default:
         break;
     }
+  }
 }
