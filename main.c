@@ -172,28 +172,27 @@ void mostrarMapa(HashMap *mapaProducto) {
 }
 
 void Exportar_mapa(char* nombre_archivo, Heap *monticuloMaximo , Heap *monticuloMinimo, int contadorDia) {
-    tipoProducto* local = NULL;
+    int contador=1;
     FILE* archivo = fopen(nombre_archivo, "w");
     fprintf(archivo, "Producto,Precio de Compra,Precio de Venta,Stock,CantVendida\n");
 
-    Pair* producto = heap_top(monticuloMaximo);
-  
-    while (producto != NULL) {
-        local = producto->value;
-        tipoProducto *aux = heap_top(monticuloMinimo);
-        if(local==NULL)
-          break;
-        while (contador <= 5)
+    tipoProducto* productoMax = heap_top(monticuloMaximo);
+    tipoProducto* productoMin = heap_top(monticuloMinimo);
+    while (contador <= 5)
         {
-        fprintf(archivo, "%s,%d,%d,%d,%d", local->nombre, local->precioCompra, local->precioVenta, local->stockInicial, local->cantVendida);
+        fprintf(archivo, "%s,%d,%d,%d,%d", productoMax->nombre, productoMax->precioCompra, productoMax->precioVenta, productoMax->stockInicial, productoMax->cantVendida);
+          fprintf(archivo, "\n");
+          heap_pop(monticuloMaximo);
+          contador++; 
         }
-
-        fprintf(archivo, "\n");
-        local->stockInicial=local->stockInicial-local->cantVendida;
-        local->cantVendida=0;
-        
-        producto = nextMap(mapaProducto);
-    }
+      while (contador <= 10)
+        {
+        fprintf(archivo, "%s,%d,%d,%d,%d", productoMin->nombre, productoMin->precioCompra, productoMin->precioVenta, productoMin->stockInicial, productoMin->cantVendida);
+          fprintf(archivo, "\n");
+          heap_pop(monticuloMinimo);
+          contador++; 
+        }
+  
 
     printf("\nArchivo exportado.\n");
     printf("————————————————————————————————————————————————————————————\n\n");
@@ -211,13 +210,14 @@ void Exportar_mapa_semanal(char* nombre_archivo, Heap *monticuloMaximo , Heap *m
     
     while (contador <= 5) 
     {
-        fprintf(archivo, "%s,%d,%d,%d,%d", productoMax->nombre, productoMax->precioCompra, local->precioVenta, local->stockInicial, local->cantVendida);
+      fprintf(archivo, "%s,%d,%d,%d,%d", productoMax->nombre, productoMax->precioCompra, productoMax->precioVenta, productoMax->stockInicial, productoMax->cantVendida);
 
-        fprintf(archivo, "\n");
-        local->stockInicial=local->stockInicial-local->cantVendida;
-        local->cantVendida=0;
-        
-        producto = nextMap(mapaProducto);
+      fprintf(archivo, "\n");
+      productoMax->stockInicial=productoMax->stockInicial-productoMax->cantVendida;
+      productoMax->cantVendida=0;
+      heap_pop(monticuloMaximo);
+      productoMax = heap_top(monticuloMaximo);
+      contador++;
     }
 
     printf("\nArchivo exportado.\n");
@@ -259,7 +259,7 @@ void finalizarDia(HashMap *mapaProducto, HashMap *mapaSemanal, List *listaDia, i
     printf("¿Como quiere llamar el archivo de esta semana?");
     scanf("%m[^\n]", &nombre_archivo);
     getchar();
-    Exportar_mapa(nombre_archivo, monticuloMaximo, monticuloMinimo);
+    Exportar_mapa_semanal(nombre_archivo, monticuloMaximo, monticuloMinimo);
     exit(EXIT_SUCCESS);
   }
 }
