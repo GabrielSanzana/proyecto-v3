@@ -1,4 +1,4 @@
-#include <stdio.h>
+  #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -79,6 +79,36 @@ void heap_pop(Heap* pq) {
             child++;
         }
         if (pq->heapArray[curr].priority > pq->heapArray[child].priority) {
+            heapElem tmp = pq->heapArray[curr];
+            pq->heapArray[curr] = pq->heapArray[child];
+            pq->heapArray[child] = tmp;
+            curr = child;
+        } else {
+            break;
+        }
+    }
+
+    if (pq->size <= pq->capac / 2) {
+        pq->capac = pq->capac / 2;
+        pq->heapArray = realloc(pq->heapArray, pq->capac * sizeof(heapElem));
+    }
+}
+
+void heap_popMax(Heap* pq) {
+    if (pq->size == 0) {
+        return;
+    }
+
+    pq->size--;
+    pq->heapArray[0] = pq->heapArray[pq->size];
+
+    int curr = 0;
+    while (curr * 2 + 1 < pq->size) {
+        int child = curr * 2 + 1;
+        if (child + 1 < pq->size && pq->heapArray[child + 1].priority > pq->heapArray[child].priority) {
+            child++;
+        }
+        if (pq->heapArray[curr].priority < pq->heapArray[child].priority) {
             heapElem tmp = pq->heapArray[curr];
             pq->heapArray[curr] = pq->heapArray[child];
             pq->heapArray[child] = tmp;
