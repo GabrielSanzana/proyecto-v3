@@ -125,15 +125,15 @@ void Control_de_stock(HashMap *mapaProducto, HashMap *mapaSemanal, tipoDia *dia)
 
 void modificar_datos_de_un_producto(HashMap *mapaProducto, HashMap *mapaSemanal) {
   int opcion, nuevoValor;
-  char nombreProducto[100];
+  char *nombreProducto;
 
   // Imprimir línea separadora para mejorar la legibilidad en la salida
   printf("\n——————————————————————————————-————————————————————————————————————————————————————————\n");
   
   // Solicitar al usuario el nombre del producto a modificar
   printf("Ingrese el nombre del producto a modificar\n");
-  scanf("%s", nombreProducto);
-
+  scanf("%m[^\n]", &nombreProducto);
+  
   // Buscar el producto en el mapa mapaProducto
   Pair *buscado = searchMap(mapaProducto, nombreProducto);
 

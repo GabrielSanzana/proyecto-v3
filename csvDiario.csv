@@ -1,11 +1,11 @@
 Producto,Precio de Compra,Precio de Venta,Stock,CantVendida
-Toalla,700,2300,80,30
-Arroz,2500,3500,50,30
-Queso,3500,5000,50,30
-Sal,500,1000,120,0
+Papas Fritas,800,1800,70,30
+Queso,3500,5000,60,0
+Atún enlatado,2000,2700,90,0
+Arroz,2500,3500,100,0
 Pan,500,1000,200,0
-Carnes,8000,12500,36,0
-Cactus,200,700,30,0
-Pastitayica,1000,1500,100,0
-Comida enlatada,1800,2500,75,0
+Carnes,8000,2000,50,0
+Queso,3500,5000,60,0
+Atún enlatado,2000,2700,90,0
+Arroz,2500,3500,100,0
 Pan,500,1000,200,0
