@@ -4,11 +4,13 @@ import sys
 
 nombrecsv = sys.argv[1]
 csv = pd.read_csv(nombrecsv, sep = ",")
-csvMin = csv.loc[range(0,5),range(0,5)]
+csvMin = csv.loc[range(5,10), ['Producto', 'CantVendida']]
+
 fig, ax = plt.subplots()
 ax.bar(csvMin["Producto"], csvMin["CantVendida"])
-ax.set_title("Gráfico de productos menos vendidos.")
-ax.set_ylim(0, max(csvMin["CantVendida"]))
-ax.set_ylim(bottom=0) 
-plt.savefig('omerochino_semanal_min.png')
+ax.set_title("Gráfico de productos menos vendidos")
+ax.set_xlabel("Producto")
+ax.set_ylabel("Cantidad Vendida")
+
 plt.show()
+plt.savefig('graficoSemMin.png')

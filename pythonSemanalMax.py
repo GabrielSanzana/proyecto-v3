@@ -3,12 +3,15 @@ import matplotlib.pyplot as plt
 import sys
 
 nombrecsv = sys.argv[1]
-csv = pd.read_csv(nombrecsv, sep = ",")
-csvMin = csv.loc[range(5,10),range(0,5)]
+csv = pd.read_csv(nombrecsv, sep=",")
+
+csvMax = csv.loc[range(0, 5), ['Producto', 'CantVendida']]
+
 fig, ax = plt.subplots()
 ax.bar(csvMax["Producto"], csvMax["CantVendida"])
 ax.set_title("Gráfico de productos más vendidos")
-ax.set_ylim(0, max(csvMax["CantVendida"]))
-ax.set_ylim(bottom=0) 
-plt.savefig('omerochino_semanal_max.png')
+ax.set_xlabel("Producto")
+ax.set_ylabel("Cantidad Vendida")
+
 plt.show()
+plt.savefig('graficoSemMax.png')

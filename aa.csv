@@ -1,0 +1,11 @@
+Producto,Precio de Compra,Precio de Venta,Stock,CantVendida,GastoDia,GananciaDia
+Carnes,8000,12500,50,14,1646000,63000
+Queso,3500,5000,60,0,0,0
+Arroz,2500,3500,100,0,0,0
+Pan,500,1000,200,0,0,0
+Leche,1000,1800,120,0,0,0
+Aceite de oliva,4000,6000,40,0,0,0
+Queso,3500,5000,60,0,0,0
+Arroz,2500,3500,100,0
+Sal,500,1000,150,0
+Leche,1000,1800,120,0

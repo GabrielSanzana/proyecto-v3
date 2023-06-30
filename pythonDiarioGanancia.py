@@ -6,11 +6,14 @@ csv = pd.read_csv("csvDiarioDinero.csv", sep=",")
 # Crear una figura y un conjunto de ejes para el gráfico de máximo
 fig, ax = plt.subplots()
 
-# Graficar la columna "Gastos"
-ax.bar(csv.index, csv["Gastos"], label="Gastos")
+# Determinar el ancho de las barras
+bar_width = 0.4
 
-# Graficar la columna "Ganancia" con un desplazamiento horizontal
-ax.bar(csv.index + 0.2, csv["Ganancia"], label="Ganancia")
+# Graficar la columna "Gastos"
+ax.bar(csv.index, csv["Gastos"], width=bar_width, label="Gastos")
+
+# Graficar la columna "Ganancia" al lado de "Gastos"
+ax.bar(csv.index + bar_width, csv["Ganancia"], width=bar_width, label="Ganancia")
 
 ax.set_title("Gráfico de ganancias y pérdidas del día")
 ax.set_xlabel("Tipo")
