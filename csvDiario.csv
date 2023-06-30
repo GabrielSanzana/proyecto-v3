@@ -1,11 +1,11 @@
 Producto,Precio de Compra,Precio de Venta,Stock,CantVendida
-Carnes,8000,12500,50,13
-Harina,1200,1800,70,0
-Jugo de naranja,1500,2500,70,0
+Carnes,8000,12500,50,0
 Queso,3500,5000,60,0
-Cerveza,2000,3500,50,0
-Lámparas LED,4000,6000,30,0
-Harina,1200,1800,70,0
-Jugo de naranja,1500,2500,70,0
+Arroz,2500,3500,100,0
+Pan,500,1000,200,0
+Leche,1000,1800,120,0
+Carnes,8000,12500,50,0
 Queso,3500,5000,60,0
-Cerveza,2000,3500,50,0
+Arroz,2500,3500,100,0
+Pan,500,1000,200,0
+Leche,1000,1800,120,0

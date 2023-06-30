@@ -1,14 +1,14 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import sys
 
-csv = pd.read_csv("csvDiario.csv", sep=",")
-csvMin = csv.loc[5:10]
-
-# Crear una figura y un conjunto de ejes para el gráfico de mínimo
+nombrecsv = sys.argv[1]
+csv = pd.read_csv(nombrecsv, sep = ",")
+csvMin = csv.loc[range(0,5),range(0,5)]
 fig, ax = plt.subplots()
 ax.bar(csvMin["Producto"], csvMin["CantVendida"])
 ax.set_title("Gráfico de productos menos vendidos.")
 ax.set_ylim(0, max(csvMin["CantVendida"]))
 ax.set_ylim(bottom=0) 
-plt.savefig('omerochino_min.png')
+plt.savefig('omerochino_semanal_min.png')
 plt.show()

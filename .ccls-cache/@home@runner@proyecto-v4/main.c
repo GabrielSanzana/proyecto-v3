@@ -170,8 +170,14 @@ void mostrarMapa(HashMap *mapaProducto) {
   }
 }
 
-void Exportar_mapa(char *nombre_archivo, Heap *monticuloMaximo, Heap *monticuloMinimo) {
+void Exportar_mapa(char *nombre_archivoDinero, char *nombre_archivo, Heap *monticuloMaximo, Heap *monticuloMinimo, List* listaDia) {
   int contador = 1;
+  tipoDia *dineroDia = lastList(listaDia);
+  FILE *archivoDinero = fopen(nombre_archivoDinero, "w");
+  fprintf(archivoDinero,"Ganancia,Gastos\n");
+  fprintf(archivoDinero, "%d,%d\n", dineroDia->gananciaDia, dineroDia->gastoDia);
+  fclose(archivoDinero);
+  
   FILE *archivo = fopen(nombre_archivo, "w");
   fprintf(archivo,"Producto,Precio de Compra,Precio de Venta,Stock,CantVendida\n");
 
@@ -181,6 +187,8 @@ void Exportar_mapa(char *nombre_archivo, Heap *monticuloMaximo, Heap *monticuloM
     fprintf(archivo, "%s,%d,%d,%d,%d", productoMax->nombre,
             productoMax->precioCompra, productoMax->precioVenta,
             productoMax->stockInicial, productoMax->cantVendida);
+    productoMax->stockInicial=productoMax->stockInicial-productoMax->cantVendida;
+    productoMax->cantVendida=0;
     fprintf(archivo, "\n");
     heap_popMax(monticuloMaximo);
     productoMax = heap_top(monticuloMaximo);
@@ -190,6 +198,8 @@ void Exportar_mapa(char *nombre_archivo, Heap *monticuloMaximo, Heap *monticuloM
     fprintf(archivo, "%s,%d,%d,%d,%d", productoMin->nombre,
             productoMin->precioCompra, productoMin->precioVenta,
             productoMin->stockInicial, productoMin->cantVendida);
+    productoMin->stockInicial=productoMin->stockInicial-productoMin->cantVendida;
+    productoMin->cantVendida=0;
     fprintf(archivo, "\n");
     heap_pop(monticuloMinimo);
     productoMin = heap_top(monticuloMinimo);
@@ -239,7 +249,9 @@ void Exportar_mapa_semanal(char *nombre_archivo, Heap *monticuloMaximo, Heap *mo
 
   printf("\nArchivo exportado.\n");
   printf("————————————————————————————————————————————————————————————\n\n");
-  fclose(archivo);
+  fclose(archivo);  
+  system("python pythonSemanal.py");
+
 }
 
 void finalizarDia(HashMap *mapaProducto, HashMap *mapaSemanal, List *listaDia, int *contadorDia, tipoDia *dia) {
@@ -256,23 +268,20 @@ void finalizarDia(HashMap *mapaProducto, HashMap *mapaSemanal, List *listaDia, i
       aux = nextMap(mapaProducto);
     }
     char *nombre_archivo = "csvDiario.csv";
-
-    Exportar_mapa(nombre_archivo, monticuloMaximo, monticuloMinimo);
+    char *nombre_archivoDinero = "csvDiarioDinero.csv";
+    Exportar_mapa(nombre_archivoDinero,nombre_archivo, monticuloMaximo, monticuloMinimo, listaDia);
     free(monticuloMaximo);
     free(monticuloMinimo);
-    system("python pythonDiarioMax.py");
-    system("python pythonDiarioMin.py");
+    //system("python pythonDiarioMax.py");
+    //system("python pythonDiarioMin.py");
+    system("python pythonDiarioGanancia.py");
   } else {
     Pair *aux = firstMap(mapaSemanal);
     char *nombre_archivo;
     while (aux != NULL) {
       tipoProducto *producto = (tipoProducto *)aux->value;
       heap_pushMax(monticuloMaximo, producto, producto->cantVendida);
-      tipoProducto *aux1 = heap_top(monticuloMaximo);
-      tipoProducto *aux2 = heap_top(monticuloMinimo);
-      printf("MAX %s %d\n", aux1->nombre, aux1->cantVendida);
       heap_pushMin(monticuloMinimo, producto, producto->cantVendida);
-      printf("MIN %s %d\n", aux2->nombre, aux2->cantVendida);
       aux = nextMap(mapaSemanal);
     }
     printf("¿Como quiere llamar el archivo de esta semana?\n");
